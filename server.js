@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://canvas-party-weld.vercel.app", // フロントエンドURL
+    origin: "*", // フロントエンドのURLを指定（デバッグ時は "*" を使用）
     methods: ["GET", "POST"]
   }
 });
@@ -17,6 +17,7 @@ app.get('/', (req, res) => {
   res.send("Socket.IO server is running.");
 });
 
+// Socket.IOの接続処理
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 

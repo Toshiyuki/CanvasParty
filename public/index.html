@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Canvas Party - Responsive</title>
+  <title>Canvas Party - Multi-user</title>
   <style>
     body {
       margin: 0;
@@ -34,20 +34,8 @@
 
     // キャンバスの初期化とリサイズ
     function resizeCanvas() {
-      const tempCanvas = document.createElement('canvas');
-      const tempCtx = tempCanvas.getContext('2d');
-
-      // 既存の内容を一時キャンバスにコピー
-      tempCanvas.width = canvas.width;
-      tempCanvas.height = canvas.height;
-      tempCtx.drawImage(canvas, 0, 0);
-
-      // 新しいサイズにリサイズ
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-
-      // コピーした内容を戻す
-      ctx.drawImage(tempCanvas, 0, 0);
     }
 
     // 初期サイズを設定

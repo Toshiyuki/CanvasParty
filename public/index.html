@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>マルチプレイヤーお絵描き</title>
+  <title>Canvas Party</title>
   <style>
     canvas {
       border: 1px solid black;
@@ -13,21 +13,21 @@
   </style>
 </head>
 <body>
-  <h1>マルチプレイヤーお絵描き</h1>
+  <h1>Canvas Party</h1>
   <canvas id="canvas" width="800" height="600"></canvas>
-  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.socket.io/4.5.3/socket.io.min.js"></script>
   <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    const socket = io(); // サーバーに接続
+
+    const socket = io('https://your-backend-server-url.com'); // バックエンドのURLを指定
 
     let drawing = false;
 
-    // 描画イベント
     canvas.addEventListener('mousedown', () => drawing = true);
     canvas.addEventListener('mouseup', () => {
       drawing = false;
-      ctx.beginPath(); // 新しいパスを開始
+      ctx.beginPath();
     });
     canvas.addEventListener('mousemove', draw);
 

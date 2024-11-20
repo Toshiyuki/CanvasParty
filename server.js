@@ -1,26 +1,37 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
+const cors = require('cors');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "https://canvas-party-weld.vercel.app", // フロントエンドURL
+    methods: ["GET", "POST"]
+  }
+});
 
-app.use(express.static('public')); // フロントエンドを提供
+app.use(cors());
+app.get('/', (req, res) => {
+  res.send("Socket.IO server is running.");
+});
 
 io.on('connection', (socket) => {
-  console.log('ユーザーが接続しました:', socket.id);
+  console.log('A user connected:', socket.id);
 
-  // 描画データを受信し、他のクライアントに送信
+  // 描画データを他のクライアントにブロードキャスト
   socket.on('draw', (data) => {
-    socket.broadcast.emit('draw', data); // 他のユーザーに送信
+    socket.broadcast.emit('draw', data);
   });
 
   socket.on('disconnect', () => {
-    console.log('ユーザーが切断しました:', socket.id);
+    console.log('A user disconnected:', socket.id);
   });
 });
 
-server.listen(3000, () => {
-  console.log('サーバーが http://localhost:3000 で起動しました');
+// サーバーを起動
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });

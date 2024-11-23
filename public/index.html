@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Canvas Party - Eraser Tool</title>
+  <title>Canvas Party - Brush Size</title>
   <style>
     body {
       margin: 0;
@@ -21,11 +21,27 @@
     }
     .toolbar {
       margin-bottom: 10px;
+      display: flex;
+      gap: 10px;
     }
     .toolbar button {
-      margin: 0 5px;
       padding: 10px;
       font-size: 16px;
+    }
+    .toolbar .size-selector {
+      display: flex;
+      gap: 5px;
+    }
+    .toolbar .size-selector button {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid black;
+      background-color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
     }
   </style>
 </head>
@@ -33,6 +49,13 @@
   <div class="toolbar">
     <button id="drawMode">Draw</button>
     <button id="eraserMode">Eraser</button>
+    <div class="size-selector">
+      <button data-size="2">1</button>
+      <button data-size="5">2</button>
+      <button data-size="10">3</button>
+      <button data-size="15">4</button>
+      <button data-size="20">5</button>
+    </div>
   </div>
   <canvas id="canvas"></canvas>
   <script src="https://cdn.socket.io/4.5.3/socket.io.min.js"></script>
@@ -43,6 +66,7 @@
 
     let drawing = false;
     let isEraser = false; // 消しゴムモードのフラグ
+    let brushSize = 5; // 初期ブラシサイズ
 
     // キャンバスの初期化とリサイズ
     function resizeCanvas() {
@@ -64,6 +88,13 @@
       isEraser = true;
     });
 
+    // ブラシサイズ切り替え
+    document.querySelectorAll('.size-selector button').forEach((button) => {
+      button.addEventListener('click', () => {
+        brushSize = parseInt(button.getAttribute('data-size'), 10);
+      });
+    });
+
     // 描画処理
     canvas.addEventListener('mousedown', startDrawing);
     canvas.addEventListener('mousemove', draw);
@@ -83,7 +114,7 @@
       if (!drawing) return;
       const { x, y } = getCoordinates(e);
 
-      ctx.lineWidth = 10; // 消しゴムと描画の共通の線幅
+      ctx.lineWidth = brushSize; // ブラシサイズを設定
       ctx.lineCap = 'round';
       ctx.strokeStyle = isEraser ? '#ffffff' : '#000000'; // 消しゴムは背景色
 
@@ -93,7 +124,7 @@
       ctx.moveTo(x, y);
 
       // サーバーに描画データを送信
-      socket.emit('draw', { x, y, isEraser });
+      socket.emit('draw', { x, y, isEraser, brushSize });
     }
 
     function stopDrawing() {
@@ -111,11 +142,11 @@
 
     // 他のユーザーの描画データを受信
     socket.on('draw', (data) => {
-      const { x, y, isEraser } = data;
+      const { x, y, isEraser, brushSize } = data;
 
-      ctx.lineWidth = 10;
+      ctx.lineWidth = brushSize;
       ctx.lineCap = 'round';
-      ctx.strokeStyle = isEraser ? '#ffffff' : '#000000'; // 消しゴムか描画モードか
+      ctx.strokeStyle = isEraser ? '#ffffff' : '#000000';
 
       ctx.lineTo(x, y);
       ctx.stroke();

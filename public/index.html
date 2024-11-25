@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Canvas Party - Brush Size Slider</title>
+  <title>Canvas Party - Brush and Eraser</title>
   <style>
     body {
       margin: 0;
@@ -20,6 +20,18 @@
       display: flex;
       gap: 20px;
       align-items: center;
+    }
+    .toolbar button {
+      padding: 15px 30px;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 10px;
+      border: 2px solid black;
+      background-color: white;
+    }
+    .toolbar button.active {
+      background-color: #d3d3d3;
     }
     canvas {
       border: 1px solid black;
@@ -40,11 +52,11 @@
 </head>
 <body>
   <div class="toolbar">
-    <button id="drawMode">Draw</button>
-    <button id="eraserMode">Eraser</button>
+    <button id="brushMode" class="active">ブラシ</button>
+    <button id="eraserMode">消しゴム</button>
     <div>
       <input id="brushSizeSlider" type="range" min="1" max="100" value="10">
-      <span>Size: <span id="brushSizeValue">10</span></span>
+      <span>サイズ: <span id="brushSizeValue">10</span></span>
     </div>
     <div class="size-preview">
       <canvas id="sizePreviewCanvas" width="100" height="100"></canvas>
@@ -61,6 +73,8 @@
     let isEraser = false; // 消しゴムモードのフラグ
     let brushSize = 10; // 初期ブラシサイズ
 
+    const brushButton = document.getElementById('brushMode');
+    const eraserButton = document.getElementById('eraserMode');
     const sizeSlider = document.getElementById('brushSizeSlider');
     const sizeValue = document.getElementById('brushSizeValue');
     const sizePreviewCanvas = document.getElementById('sizePreviewCanvas');
@@ -79,11 +93,17 @@
     window.addEventListener('resize', resizeCanvas);
 
     // モード切り替え
-    document.getElementById('drawMode').addEventListener('click', () => {
+    brushButton.addEventListener('click', () => {
       isEraser = false;
+      brushButton.classList.add('active');
+      eraserButton.classList.remove('active');
+      updateSizePreview();
     });
-    document.getElementById('eraserMode').addEventListener('click', () => {
+    eraserButton.addEventListener('click', () => {
       isEraser = true;
+      brushButton.classList.remove('active');
+      eraserButton.classList.add('active');
+      updateSizePreview();
     });
 
     // ブラシサイズ変更

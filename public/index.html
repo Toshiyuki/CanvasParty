@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Canvas Party - Mobile Optimized</title>
+  <title>Canvas Party - Optimized Toolbar</title>
   <style>
     body {
       margin: 0;
@@ -16,15 +16,20 @@
       overflow: hidden;
     }
     .toolbar {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 15px;
       margin-bottom: 10px;
+    }
+    .vertical-buttons {
       display: flex;
       flex-direction: column;
-      align-items: center;
       gap: 10px;
     }
     .toolbar button {
-      padding: 8px 15px;
-      font-size: 14px;
+      padding: 6px 10px;
+      font-size: 12px;
       font-weight: bold;
       cursor: pointer;
       border-radius: 5px;
@@ -34,19 +39,9 @@
     .toolbar button.active {
       background-color: #d3d3d3;
     }
-    .toolbar .save-button {
-      font-size: 12px;
-      padding: 6px 10px;
-    }
     canvas {
       border: 1px solid black;
       touch-action: none; /* タッチスクロールを無効化 */
-    }
-    .size-controls {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
     }
     .size-preview {
       display: flex;
@@ -63,16 +58,20 @@
 </head>
 <body>
   <div class="toolbar">
-    <button id="brushMode" class="active">ブラシ</button>
-    <button id="eraserMode">消しゴム</button>
-    <div class="size-controls">
+    <!-- 縦配置 -->
+    <div class="vertical-buttons">
+      <button id="brushMode" class="active">ブラシ</button>
+      <button id="eraserMode">消しゴム</button>
+    </div>
+    <!-- 横配置 -->
+    <div>
       <input id="brushSizeSlider" type="range" min="1" max="100" value="10">
       <span>サイズ: <span id="brushSizeValue">10</span></span>
     </div>
     <div class="size-preview">
-      <canvas id="sizePreviewCanvas" width="100" height="100"></canvas>
+      <canvas id="sizePreviewCanvas" width="50" height="50"></canvas>
     </div>
-    <button id="saveImage" class="save-button">保存</button>
+    <button id="saveImage">保存</button>
   </div>
   <canvas id="canvas"></canvas>
   <script src="https://cdn.socket.io/4.5.3/socket.io.min.js"></script>
@@ -131,7 +130,7 @@
       sizePreviewCtx.clearRect(0, 0, sizePreviewCanvas.width, sizePreviewCanvas.height);
       sizePreviewCtx.fillStyle = isEraser ? '#ffffff' : '#000000'; // 消しゴムは白
       sizePreviewCtx.beginPath();
-      sizePreviewCtx.arc(50, 50, brushSize / 2, 0, Math.PI * 2);
+      sizePreviewCtx.arc(25, 25, brushSize / 2, 0, Math.PI * 2);
       sizePreviewCtx.fill();
     }
 

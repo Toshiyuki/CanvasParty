@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Canvas Party - Brush and Eraser</title>
+  <title>Canvas Party - Download Image</title>
   <style>
     body {
       margin: 0;
@@ -61,6 +61,7 @@
     <div class="size-preview">
       <canvas id="sizePreviewCanvas" width="100" height="100"></canvas>
     </div>
+    <button id="downloadImage">画像をダウンロード</button>
   </div>
   <canvas id="canvas"></canvas>
   <script src="https://cdn.socket.io/4.5.3/socket.io.min.js"></script>
@@ -79,6 +80,7 @@
     const sizeValue = document.getElementById('brushSizeValue');
     const sizePreviewCanvas = document.getElementById('sizePreviewCanvas');
     const sizePreviewCtx = sizePreviewCanvas.getContext('2d');
+    const downloadButton = document.getElementById('downloadImage');
 
     // キャンバスの初期化とリサイズ
     function resizeCanvas() {
@@ -182,6 +184,14 @@
       ctx.stroke();
       ctx.beginPath();
       ctx.moveTo(x, y);
+    });
+
+    // ダウンロード処理
+    downloadButton.addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = 'canvas-image.png';
+      link.href = canvas.toDataURL(); // キャンバスの内容を画像データURLに変換
+      link.click(); // 自動的にクリックしてダウンロードを開始
     });
   </script>
 </body>

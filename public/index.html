@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Canvas Party - Brush Size</title>
+  <title>Canvas Party - Brush Size Slider</title>
   <style>
     body {
       margin: 0;
@@ -15,33 +15,26 @@
       background-color: #f0f0f0;
       overflow: hidden;
     }
+    .toolbar {
+      margin-bottom: 10px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
     canvas {
       border: 1px solid black;
       touch-action: none; /* タッチスクロールを無効化 */
     }
-    .toolbar {
-      margin-bottom: 10px;
+    .size-preview {
       display: flex;
-      gap: 10px;
-    }
-    .toolbar button {
-      padding: 10px;
-      font-size: 16px;
-    }
-    .toolbar .size-selector {
-      display: flex;
-      gap: 5px;
-    }
-    .toolbar .size-selector button {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      border: 2px solid black;
-      background-color: white;
-      display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      font-size: 12px;
+    }
+    .size-preview canvas {
+      border: none;
+    }
+    input[type="range"] {
+      width: 200px;
     }
   </style>
 </head>
@@ -49,12 +42,12 @@
   <div class="toolbar">
     <button id="drawMode">Draw</button>
     <button id="eraserMode">Eraser</button>
-    <div class="size-selector">
-      <button data-size="2">1</button>
-      <button data-size="5">2</button>
-      <button data-size="10">3</button>
-      <button data-size="15">4</button>
-      <button data-size="20">5</button>
+    <div>
+      <input id="brushSizeSlider" type="range" min="1" max="100" value="10">
+      <span>Size: <span id="brushSizeValue">10</span></span>
+    </div>
+    <div class="size-preview">
+      <canvas id="sizePreviewCanvas" width="100" height="100"></canvas>
     </div>
   </div>
   <canvas id="canvas"></canvas>
@@ -66,7 +59,12 @@
 
     let drawing = false;
     let isEraser = false; // 消しゴムモードのフラグ
-    let brushSize = 5; // 初期ブラシサイズ
+    let brushSize = 10; // 初期ブラシサイズ
+
+    const sizeSlider = document.getElementById('brushSizeSlider');
+    const sizeValue = document.getElementById('brushSizeValue');
+    const sizePreviewCanvas = document.getElementById('sizePreviewCanvas');
+    const sizePreviewCtx = sizePreviewCanvas.getContext('2d');
 
     // キャンバスの初期化とリサイズ
     function resizeCanvas() {
@@ -88,12 +86,24 @@
       isEraser = true;
     });
 
-    // ブラシサイズ切り替え
-    document.querySelectorAll('.size-selector button').forEach((button) => {
-      button.addEventListener('click', () => {
-        brushSize = parseInt(button.getAttribute('data-size'), 10);
-      });
+    // ブラシサイズ変更
+    sizeSlider.addEventListener('input', (e) => {
+      brushSize = parseInt(e.target.value, 10);
+      sizeValue.textContent = brushSize;
+      updateSizePreview();
     });
+
+    // サイズプレビュー更新
+    function updateSizePreview() {
+      sizePreviewCtx.clearRect(0, 0, sizePreviewCanvas.width, sizePreviewCanvas.height);
+      sizePreviewCtx.fillStyle = isEraser ? '#ffffff' : '#000000'; // 消しゴムは白
+      sizePreviewCtx.beginPath();
+      sizePreviewCtx.arc(50, 50, brushSize / 2, 0, Math.PI * 2);
+      sizePreviewCtx.fill();
+    }
+
+    // 初期プレビューを設定
+    updateSizePreview();
 
     // 描画処理
     canvas.addEventListener('mousedown', startDrawing);

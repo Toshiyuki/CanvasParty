@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Canvas Party - Compact Buttons</title>
+  <title>Canvas Party - Mobile Optimized</title>
   <style>
     body {
       margin: 0;
@@ -18,8 +18,9 @@
     .toolbar {
       margin-bottom: 10px;
       display: flex;
-      gap: 10px;
+      flex-direction: column;
       align-items: center;
+      gap: 10px;
     }
     .toolbar button {
       padding: 8px 15px;
@@ -33,9 +34,19 @@
     .toolbar button.active {
       background-color: #d3d3d3;
     }
+    .toolbar .save-button {
+      font-size: 12px;
+      padding: 6px 10px;
+    }
     canvas {
       border: 1px solid black;
       touch-action: none; /* タッチスクロールを無効化 */
+    }
+    .size-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
     }
     .size-preview {
       display: flex;
@@ -54,14 +65,14 @@
   <div class="toolbar">
     <button id="brushMode" class="active">ブラシ</button>
     <button id="eraserMode">消しゴム</button>
-    <div>
+    <div class="size-controls">
       <input id="brushSizeSlider" type="range" min="1" max="100" value="10">
       <span>サイズ: <span id="brushSizeValue">10</span></span>
     </div>
     <div class="size-preview">
       <canvas id="sizePreviewCanvas" width="100" height="100"></canvas>
     </div>
-    <button id="downloadImage">ダウンロード</button>
+    <button id="saveImage" class="save-button">保存</button>
   </div>
   <canvas id="canvas"></canvas>
   <script src="https://cdn.socket.io/4.5.3/socket.io.min.js"></script>
@@ -80,7 +91,7 @@
     const sizeValue = document.getElementById('brushSizeValue');
     const sizePreviewCanvas = document.getElementById('sizePreviewCanvas');
     const sizePreviewCtx = sizePreviewCanvas.getContext('2d');
-    const downloadButton = document.getElementById('downloadImage');
+    const saveButton = document.getElementById('saveImage');
 
     // キャンバスの初期化とリサイズ
     function resizeCanvas() {
@@ -186,8 +197,8 @@
       ctx.moveTo(x, y);
     });
 
-    // ダウンロード処理
-    downloadButton.addEventListener('click', () => {
+    // 保存処理
+    saveButton.addEventListener('click', () => {
       const link = document.createElement('a');
       link.download = 'canvas-image.png';
       link.href = canvas.toDataURL(); // キャンバスの内容を画像データURLに変換
